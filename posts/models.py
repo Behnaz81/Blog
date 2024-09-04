@@ -10,6 +10,7 @@ class Category(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=255, unique=True)
+    body = models.TextField()
     writer = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
