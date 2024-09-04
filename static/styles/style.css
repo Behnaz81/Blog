@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'Vazir';
+    src: url(fonts/ttf/Vazirmatn-Regular.ttf);
+    src: url(fonts/webfonts/Vazirmatn-Regular.woff2);
+}
+
+@font-face {
+    font-family: 'B Titr';
+    src: url(fonts/ttf/BTitr.ttf);
+}
+
+.vazir{
+    font-family: Vazir;
+}
+
+.titr{
+    font-family: "B Titr";
+}
