@@ -1,7 +1,7 @@
 from rest_framework.generics import CreateAPIView
 from rest_framework import viewsets
-from posts.serializers import PostSerializer
-from posts.models import Post
+from posts.serializers import PostSerializer, CategorySerializer
+from posts.models import Post, Category
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -10,3 +10,8 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(writer=self.request.user)
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
