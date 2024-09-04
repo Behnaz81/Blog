@@ -11,6 +11,9 @@
                 دسته بندی‌ها
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {% for category in categories %}
+                    <a href="#" class="dropdown-item text-center">{{ category.title }}</a>
+                {% endfor %}
             </div>
         </div>
         <!-- Dropdown -->
