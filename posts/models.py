@@ -18,10 +18,10 @@ class Category(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=255, unique=True)
     body = models.TextField()
-    writer = models.ForeignKey(User, on_delete=models.CASCADE)
+    writer = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     def __str__(self):
         return self.title
