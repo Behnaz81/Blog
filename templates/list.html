@@ -1,0 +1,12 @@
+<div class="row justify-content-start mx-auto text-center me-5 pe-5">
+{% for post in posts %}
+    <div class="col-lg-2 col-sm-4 col-md-3 card m-2">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body text-center">
+            <h5 class="card-title">{{ post.title }}</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ post.writer }}</h6>
+            <button type="button" class="btn btn-outline-dark">مطالعه</button>
+        </div>
+    </div>
+{% endfor %}
+</div>
