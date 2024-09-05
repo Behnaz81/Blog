@@ -22,3 +22,5 @@ env/
 *.idea/
 *.vscode/
 migrations
+
+media
