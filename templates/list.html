@@ -1,12 +1,14 @@
 <div class="row justify-content-start text-center me-5 pe-5">
 {% for post in posts %}
-    <div class="col-lg-2 col-sm-4 col-md-3 card m-2" style="height: 400px;">
+    <div class="col-lg-2 col-sm-4 col-md-3 card m-2" style="height: 350px;">
         <img src="{{ post.image }}" class="card-img-top img-fluid mt-2 h-50" alt="{{ post.title }}">
         <div class="card-body text-center">
-            <h5 class="card-title">{{ post.title }}</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">{{ post.category.title }}</h6>
-            <p class="text-body-secondary">{{ post.created_at }}</p>
-            <a href="{% url 'my_site:detail-post' post.id %}" type="button" class="btn btn-outline-dark">مطالعه</a>
+            <h5 class="card-title titr fs-4 mb-3">{{ post.title }}</h5>
+            <div class="row">
+                <p class="card-subtitle mb-2 text-body-secondary fw-lighter col">{{ post.category.title }}</p>
+                <p class="text-body-secondary fw-lighter col">{{ post.created_at }}</p>
+            </div>
+            <a href="{% url 'my_site:detail-post' post.id %}" type="button" class="btn btn-outline-dark w-75">مطالعه</a>
         </div>
     </div>
 {% endfor %}
