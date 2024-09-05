@@ -1,22 +1,31 @@
-<!-- Detail Page -->
-<div class="text-light vazir row mx-3 my-4">
+{% extends 'base.html' %}
 
-    <div class="col-8">
+<!-- Title -->
+{% block title %}{{ post.title }}{% endblock %}
 
-        <h1 class="text-light text-right titr fs-1 mb-4">عنوان</h1>
+<!-- Content -->
+{% block content %}
 
-        <div class="row mb-4">
-            <p class="col-2 lead text-light fs-6 ">نویسنده</p>
-            <p class="col-2 text-light fs-6">دسته بندی</p>
-            <p class="col-2 text-light fs-6">تاریخ انتشار:</p>
+    <div class="text-light vazir row mx-3 my-4">
+
+        <div class="col-8">
+
+            <h1 class="text-light text-right titr fs-1 mb-4">{{ post.title }}</h1>
+
+            <div class="row mb-4">
+                <p class="col-2 lead text-light fs-6 ">{{ post.writer }}</p>
+                <p class="col-2 text-light fs-6">{{ post.category.title }}</p>
+                <p class="col-2 text-light fs-6">{{ post.created_at }}</p>
+            </div>
+
+            <p class="fs-4">{{ post.body }}</p>
+
         </div>
 
-        <p class="fs-2">متن</p>
-        
+        <div class="col-4 text-center img-fluid">
+            <img src="{{ post.image }}" class="w-100" alt="">
+        </div>
+
     </div>
 
-    <div class="col-4 text-center img-fluid">
-        <img src="../media/images/default.png" class="w-100" alt="">
-    </div>
-
-</div>
+{% endblock %}
