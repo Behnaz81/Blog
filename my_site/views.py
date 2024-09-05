@@ -28,3 +28,16 @@ def filtered_posts(request, cat_id):
     }
 
     return render(request, 'index.html', context)
+
+def detail_post(request, post_id):
+    post_get = requests.get(f'http://localhost:8000/api/posts/{post_id}/')
+    post = post_get.json()
+    categories_get = requests.get('http://localhost:8000/api/categories/')
+    categories = categories_get.json()
+
+    context = {
+        'post': post,
+        'categories': categories
+    }
+
+    return render(request, 'post_details.html', context)
