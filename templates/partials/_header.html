@@ -3,7 +3,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-dark container-fluid" data-bs-theme="dark">
 
-        <a class="navbar-brand ms-5" href="{% url 'index' %}">وبلاگ من</a>
+        <a class="navbar-brand ms-5" href="{% url 'my_site:index' %}">وبلاگ من</a>
         
         <!-- Dropdown -->
         <div class="dropdown vazir">
@@ -12,7 +12,7 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 {% for category in categories %}
-                    <a href="#" class="dropdown-item text-center">{{ category.title }}</a>
+                    <a href="{% url 'my_site:filtered' category.id %}" class="dropdown-item text-center">{{ category.title }}</a>
                 {% endfor %}
             </div>
         </div>
