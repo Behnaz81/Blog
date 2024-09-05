@@ -3,6 +3,8 @@ from posts.models import Post, Category
 
 
 class PostSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format="%d %b")
+
     class Meta:
         model = Post
         fields = ('id', 'title', 'body', 'category', 'writer', 'created_at', 'updated_at', 'image')
