@@ -18,6 +18,7 @@ class Category(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=255, unique=True)
     body = models.TextField()
+    image = models.ImageField(upload_to="images", default="images/default.png")
     writer = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
