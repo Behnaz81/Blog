@@ -28,20 +28,47 @@
 
     </div>
 
+    <!-- Comments To Show -->
+    <div class="bg-light m-4 p-3 rounded">
+        <p class="fs-3">نظرات ({{ related_comments_count }})</p>
+        {% if related_comments %}
+            <div class="">    
+                    {% for comment in related_comments %}
+                        <hr>
+                        <div class="pe-1">{{ comment.user }}</div>
+                        <div class="pe-3">{{ comment.message }}</div>
+                    {% endfor %}
+            </div>
+        {% else %}
+            <hr>
+            اولین نفر باشید که نظر ثبت می‌کنید.
+        {% endif %}
+    </div>
+
+    <!-- Related Articles -->
     <p class="fs-2 text-center text-light">مطالب مشابه</p>
+
     <div class="row justify-content-start text-center me-5 pe-5">
         {% for related_post in related_posts %}
+
             <div class="col-lg-2 col-sm-4 col-md-3 card m-2" style="height: 350px;">
+
                 <img src="{{ related_post.image }}" class="card-img-top img-fluid mt-2 h-50" alt="{{ related_post.title }}">
+
                 <div class="card-body text-center">
                     <h5 class="card-title titr fs-4 mb-3">{{ related_post.title }}</h5>
+
                     <div class="row">
                         <p class="card-subtitle mb-2 text-body-secondary fw-lighter col">{{ related_post.category.title }}</p>
                         <p class="text-body-secondary fw-lighter col">{{ related_post.created_at }}</p>
                     </div>
+
                     <a href="{% url 'my_site:detail-post' related_post.id %}" type="button" class="btn btn-outline-dark w-75">مطالعه</a>
+
                 </div>
-            </div>    
+
+            </div> 
+
         {% endfor %}    
     </div>
 
