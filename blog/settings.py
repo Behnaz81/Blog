@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'posts',
+    'comments',
     'my_site',
 ]
 
