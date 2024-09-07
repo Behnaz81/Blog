@@ -37,13 +37,17 @@ def detail_post(request, post_id):
     categories = categories_get.json()
     related_posts = requests.get(f'http://localhost:8000/api/posts-with-category/{cat_id}/')
     related_posts_json = related_posts.json()
+    related_comments = requests.get(f'http://localhost:8000/api/comments/comments-filtered-by-post/{post_id}/')
+    related_comments_json = related_comments.json()
 
     related_posts_json = [i for i in related_posts_json if not (i['id'] == post['id'])][0:5]
 
     context = {
         'post': post,
         'categories': categories,
-        'related_posts': related_posts_json
+        'related_posts': related_posts_json,
+        'related_comments': related_comments_json[0:10],
+        'related_comments_count': len(related_comments_json)
     }
 
     return render(request, 'post_details.html', context)
