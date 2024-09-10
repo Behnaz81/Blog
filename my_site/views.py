@@ -55,20 +55,15 @@ def detail_post(request, post_id):
     related_posts_json = [i for i in related_posts_json if not (i['id'] == post['id'])][0:5]
     
     # Submit a comment
+    form_errors=[]
     if request.method == 'POST':
-        print(request.POST)
         create_comment_response = requests.post(f'http://localhost:8000/api/comments/comment-add/{post_id}/', data=request.POST)
         if create_comment_response.status_code == 201:
             return HttpResponseRedirect(f'http://localhost:8000/post/{post_id}/')
-        else:
-            print(create_comment_response.content)
         
     # Fetch related comments
     related_comments = requests.get(f'http://localhost:8000/api/comments/comments-filtered-by-post/{post_id}/')
     related_comments_json = related_comments.json()
-        
-    # Comment form
-    serializer = CommentCreateSerializer()
 
 
     context = {
@@ -77,7 +72,7 @@ def detail_post(request, post_id):
         'related_posts': related_posts_json,
         'related_comments': related_comments_json[0:10],
         'related_comments_count': len(related_comments_json),
-        'serializer': serializer,
+        'form_errors': form_errors
     }
 
     return render(request, 'post_details.html', context)
