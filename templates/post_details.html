@@ -28,23 +28,6 @@
 
     </div>
 
-    <!-- Comments To Show -->
-    <div class="bg-light m-4 p-3 rounded">
-        <p class="fs-3">نظرات ({{ related_comments_count }})</p>
-        {% if related_comments %}
-            <div class="">    
-                    {% for comment in related_comments %}
-                        <hr>
-                        <div class="pe-1">{{ comment.user }}</div>
-                        <div class="pe-3">{{ comment.message }}</div>
-                    {% endfor %}
-            </div>
-        {% else %}
-            <hr>
-            اولین نفر باشید که نظر ثبت می‌کنید.
-        {% endif %}
-    </div>
-
     <!-- Related Articles -->
     <p class="fs-2 text-center text-light">مطالب مشابه</p>
 
@@ -70,6 +53,30 @@
             </div> 
 
         {% endfor %}    
+    </div>
+    
+    <div class="bg-light m-4 p-3 rounded">
+
+        <!-- Comments To Show -->
+        <p class="fs-3">نظرات ({{ related_comments_count }})</p>
+        {% if related_comments %}
+            <div class="">    
+                    {% for comment in related_comments %}
+                        <hr>
+                        <div class="pe-1">{{ comment.user }}</div>
+                        <div class="pe-3">{{ comment.message }}</div>
+                    {% endfor %}
+            </div>
+        {% else %}
+            <hr>
+            اولین نفر باشید که نظر ثبت می‌کنید.
+        {% endif %}
+
+        <hr>
+        
+        <!-- Submit comment -->
+        {% include 'comment_form.html' %}
+        
     </div>
 
 {% endblock %}
