@@ -1,0 +1,15 @@
+<form method="POST">
+    {% csrf_token %}
+    {% if form_errors %}
+        <div class="alert alert-danger">
+            {% for error in form_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="form-group mt-4">
+        <label for="message">نظر خود را وارد کنید</label>
+        <textarea name="message" id="message" class="form-control my-2" rows="8" cols="50" placeholder="سلام..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-outline-dark px-5">ثبت</button>
+</form>
