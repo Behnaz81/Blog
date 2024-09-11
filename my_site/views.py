@@ -100,4 +100,29 @@ def register_user(request):
             print(register_user_response.content)
             return HttpResponseRedirect(f'http://localhost:8000/')
     else:
-        return render(request, 'register.html', context)        
+        return render(request, 'register.html', context) 
+
+
+def login_user(request):
+
+    
+
+    if request.method == 'POST':
+        register_user_response = requests.post(f'{BASE_API_URL}users/login/', data=request.POST)
+        if register_user_response.status_code == 200:
+            token = register_user_response.json().get('token') 
+            print(token)
+            return HttpResponseRedirect(f'http://localhost:8000/')
+        else:
+            print(register_user_response.content)
+            return HttpResponseRedirect(f'http://localhost:8000/')
+    else:
+        # Fetch categories
+        categories_get = requests.get('http://localhost:8000/api/categories/')
+        categories = categories_get.json()
+
+        context = {
+            'categories': categories
+        }
+        
+        return render(request, 'login.html', context)
