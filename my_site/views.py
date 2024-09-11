@@ -81,6 +81,15 @@ def detail_post(request, post_id):
 
 
 def register_user(request):
+
+    # Fetch categories
+    categories_get = requests.get('http://localhost:8000/api/categories/')
+    categories = categories_get.json()
+
+    context = {
+        'categories': categories
+    }
+
     if request.method == 'POST':
         register_user_response = requests.post(f'{BASE_API_URL}users/register/', data=request.POST)
         if register_user_response.status_code == 201:
@@ -91,4 +100,4 @@ def register_user(request):
             print(register_user_response.content)
             return HttpResponseRedirect(f'http://localhost:8000/')
     else:
-        return render(request, 'register.html')        
+        return render(request, 'register.html', context)        
