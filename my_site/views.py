@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect
 from comments.serializers import CommentCreateSerializer
 
 
+BASE_API_URL = 'http://localhost:8000/api/'
+
 def index_view(request):
 
     # Fetch all posts
@@ -76,3 +78,17 @@ def detail_post(request, post_id):
     }
 
     return render(request, 'post_details.html', context)
+
+
+def register_user(request):
+    if request.method == 'POST':
+        register_user_response = requests.post(f'{BASE_API_URL}users/register/', data=request.POST)
+        if register_user_response.status_code == 201:
+            token = register_user_response.json().get('token') 
+            print(token)
+            return HttpResponseRedirect(f'http://localhost:8000/')
+        else:
+            print(register_user_response.content)
+            return HttpResponseRedirect(f'http://localhost:8000/')
+    else:
+        return render(request, 'register.html')        
