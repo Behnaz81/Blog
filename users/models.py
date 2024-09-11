@@ -11,3 +11,4 @@ class CustomUser(AbstractUser):
     )
 
     role = models.CharField(max_length=100, choices=ROLE_CHOICES, default='Simple User')
+    password = models.CharField(max_length=100)
