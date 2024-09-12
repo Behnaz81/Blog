@@ -73,7 +73,7 @@ def filtered_posts(request, cat_id):
 def detail_post(request, post_id):
 
     # Fetch post details
-    post_get = requests.get(f'http://localhost:8000/api/posts/{post_id}/')
+    post_get = requests.get(f'{BASE_API_URL}posts/{post_id}/')
     post = post_get.json()
 
     # Fetch categories
