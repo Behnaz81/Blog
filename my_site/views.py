@@ -10,7 +10,6 @@ BASE_API_URL = 'http://localhost:8000/api/'
 def logout_user(request):
 
     token = request.session.get('auth_token')
-    print(token)
     headers = {
         'Authorization': f'Token {token}'
     }
@@ -39,7 +38,7 @@ def index_view(request):
         logout_user(request)
 
     # Fetch all posts
-    posts_get = requests.get('http://localhost:8000/api/posts/')
+    posts_get = requests.get(f'{BASE_API_URL}posts/list-posts/')
     posts = posts_get.json()
 
     # Fetch categories
@@ -93,10 +92,7 @@ def detail_post(request, post_id):
         create_comment_response = requests.post(f'http://localhost:8000/api/comments/comment-add/{post_id}/', data=request.POST)
         if create_comment_response.status_code == 201:
             return HttpResponseRedirect(f'http://localhost:8000/post/{post_id}/')
-        
-
-
-        
+      
     # Fetch related comments
     related_comments = requests.get(f'http://localhost:8000/api/comments/comments-filtered-by-post/{post_id}/')
     related_comments_json = related_comments.json()
@@ -162,4 +158,32 @@ def login_user(request):
         
         return render(request, 'login.html', context)
 
+
+def new_post(request):
+    categories_get = requests.get('http://localhost:8000/api/categories/')
+    categories = categories_get.json()
+
+    context = {
+        'categories': categories
+    }
+
+    if request.method == 'POST':
+        token = request.session.get('auth_token')
+        print(token)
+
+        headers = {
+            'Authorization': f'Token {token}'
+        }
+        
+        create_post_respone = requests.post(f'{BASE_API_URL}posts/new-post/', headers=headers, data=request.POST, files=request.FILES)
+
+        if create_post_respone.status_code == 201:
+            return redirect('my_site:index')
+        
+        else:
+            print(create_post_respone.content)
+            return redirect('my_site:index')
+    
+    else:
+        return render(request, 'new_post.html', context)
 
