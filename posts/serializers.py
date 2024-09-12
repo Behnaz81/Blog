@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from users.serializers import UserSerializer
 from posts.models import Post, Category
 
 User = get_user_model()
@@ -16,6 +17,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format="%d %b")
     category = CategorySerializer(read_only=True)
+    writer = UserSerializer(read_only=True)
 
     class Meta:
         model = Post
