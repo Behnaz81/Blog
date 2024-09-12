@@ -20,8 +20,12 @@
 
         <!-- Login and Signup -->
         <div class="w-100 text-start">
+
+            <!-- If logged in -->
             {% if request.session.auth_token %}
-                <div class="dropdown vazir">
+                <a href="{% url 'my_site:new-post' %}" type="button" class="btn btn-outline-light px-4">پست جدید +</a>
+
+                <div class="dropdown vazir d-inline">
                     <button class="btn link-light bg-transparent dropdown-toggle text-right" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {{ request.session.username }}
                     </button>
@@ -33,6 +37,8 @@
                         </form>
                     </div>
                 </div>
+
+            <!-- If not logged in -->
             {% else %}
                 <a href="{% url 'my_site:register' %}" type="button" class="btn btn-outline-light px-4">ثبت نام</a>
                 <a href="{% url 'my_site:login' %}" type="button" class="btn btn-outline-light px-4 mx-2">ورود</a>
