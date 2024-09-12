@@ -1,10 +1,12 @@
 from rest_framework import serializers 
 from posts.serializers import PostSerializer
+from users.serializers import UserSerializer
 from comments.models import Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
     posted_at = serializers.DateTimeField(format="%d %b")
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Comment
@@ -14,7 +16,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     post = PostSerializer(read_only=True)
-
 
     class Meta:
         model = Comment

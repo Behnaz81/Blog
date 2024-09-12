@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from comments.serializers import CommentSerializer, CommentCreateSerializer
 from comments.models import Comment
@@ -19,8 +20,8 @@ class CommentFilteredByPost(generics.ListAPIView):
 class CreateCommentView(generics.CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentCreateSerializer
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         post = Post.objects.get(id=self.kwargs.get('post_id'))
-        user = User.objects.get(id=1)
-        return serializer.save(post=post, user=user)
+        return serializer.save(post=post, user=self.request.user)
