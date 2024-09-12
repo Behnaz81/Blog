@@ -1,17 +1,13 @@
 from rest_framework import viewsets
 from rest_framework import generics
-from django.shortcuts import render
-import requests
-from posts.serializers import PostSerializer, CategorySerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from posts.serializers import PostSerializer, CategorySerializer, PostCreateSerializer
 from posts.models import Post, Category
 
 
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(writer=self.request.user)
+# class PostViewSet(viewsets.ModelViewSet):
+#     def perform_create(self, serializer):
+#         serializer.save(writer=self.request.user)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -26,3 +22,12 @@ class PostFilteredByCategory(generics.ListAPIView):
     def get_queryset(self):
         cat_id = self.kwargs.get('cat_id') 
         return Post.objects.filter(category=cat_id)
+
+
+class CreatePostView(generics.CreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        return serializer.save(writer=self.request.user)
