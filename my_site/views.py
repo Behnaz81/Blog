@@ -89,7 +89,13 @@ def detail_post(request, post_id):
     # Submit a comment
     form_errors=[]
     if request.method == 'POST':
-        create_comment_response = requests.post(f'http://localhost:8000/api/comments/comment-add/{post_id}/', data=request.POST)
+        token = request.session.get('auth_token')
+
+        headers = {
+            'Authorization': f'Token {token}'
+        }
+        
+        create_comment_response = requests.post(f'{BASE_API_URL}comments/comment-add/{post_id}/', data=request.POST, headers=headers)
         if create_comment_response.status_code == 201:
             return HttpResponseRedirect(f'http://localhost:8000/post/{post_id}/')
       
@@ -169,7 +175,6 @@ def new_post(request):
 
     if request.method == 'POST':
         token = request.session.get('auth_token')
-        print(token)
 
         headers = {
             'Authorization': f'Token {token}'
