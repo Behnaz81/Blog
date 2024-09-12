@@ -5,11 +5,6 @@ from posts.serializers import PostSerializer, CategorySerializer, PostCreateSeri
 from posts.models import Post, Category
 
 
-# class PostViewSet(viewsets.ModelViewSet):
-#     def perform_create(self, serializer):
-#         serializer.save(writer=self.request.user)
-
-
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -31,3 +26,9 @@ class CreatePostView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         return serializer.save(writer=self.request.user)
+    
+
+class ListPostsView(generics.ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [AllowAny]
