@@ -20,8 +20,23 @@
 
         <!-- Login and Signup -->
         <div class="w-100 text-start">
-            <a href="{% url 'my_site:register' %}" type="button" class="btn btn-outline-light px-4">ثبت نام</a>
-            <a href="{% url 'my_site:login' %}" type="button" class="btn btn-outline-light px-4 mx-2">ورود</a>
+            {% if request.session.auth_token %}
+                <div class="dropdown vazir">
+                    <button class="btn link-light bg-transparent dropdown-toggle text-right" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ request.session.username }}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a href="#" class="dropdown-item text-center">پروفایل من</a>
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item text-center">خروج</button>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'my_site:register' %}" type="button" class="btn btn-outline-light px-4">ثبت نام</a>
+                <a href="{% url 'my_site:login' %}" type="button" class="btn btn-outline-light px-4 mx-2">ورود</a>
+            {% endif %}
         </div>
 
     </nav>
