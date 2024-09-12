@@ -1,12 +1,42 @@
 import requests
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from comments.serializers import CommentCreateSerializer
 
 
 BASE_API_URL = 'http://localhost:8000/api/'
 
+
+def logout_user(request):
+
+    token = request.session.get('auth_token')
+    print(token)
+    headers = {
+        'Authorization': f'Token {token}'
+    }
+
+    logout_response = requests.post(f'{BASE_API_URL}users/logout/', headers=headers)
+
+    if logout_response.status_code == 200:
+        del request.session['auth_token']
+        del request.session['username']
+        print('deleted')
+        return redirect('my_site:index')
+    else:
+        return HttpResponseRedirect('http://localhost:8000/')
+
+
 def index_view(request):
+
+    token = request.session.get('auth_token')
+
+    if token:
+        logged_in = True
+    else:
+        logged_in = False
+
+    if request.method == 'POST':
+        logout_user(request)
 
     # Fetch all posts
     posts_get = requests.get('http://localhost:8000/api/posts/')
@@ -18,7 +48,8 @@ def index_view(request):
 
     context = {
         'posts': posts,
-        'categories': categories
+        'categories': categories,
+        'logged_in': logged_in
     }
 
     return render(request, 'index.html', context)
@@ -63,6 +94,9 @@ def detail_post(request, post_id):
         if create_comment_response.status_code == 201:
             return HttpResponseRedirect(f'http://localhost:8000/post/{post_id}/')
         
+
+
+        
     # Fetch related comments
     related_comments = requests.get(f'http://localhost:8000/api/comments/comments-filtered-by-post/{post_id}/')
     related_comments_json = related_comments.json()
@@ -94,7 +128,6 @@ def register_user(request):
         register_user_response = requests.post(f'{BASE_API_URL}users/register/', data=request.POST)
         if register_user_response.status_code == 201:
             token = register_user_response.json().get('token') 
-            print(token)
             return HttpResponseRedirect(f'http://localhost:8000/')
         else:
             print(register_user_response.content)
@@ -105,14 +138,16 @@ def register_user(request):
 
 def login_user(request):
 
-    
-
     if request.method == 'POST':
         register_user_response = requests.post(f'{BASE_API_URL}users/login/', data=request.POST)
         if register_user_response.status_code == 200:
+            user = register_user_response.json().get('user')
             token = register_user_response.json().get('token') 
-            print(token)
-            return HttpResponseRedirect(f'http://localhost:8000/')
+            
+            request.session['auth_token'] = token
+            request.session['username'] = user['username']
+
+            return redirect('my_site:index')
         else:
             print(register_user_response.content)
             return HttpResponseRedirect(f'http://localhost:8000/')
@@ -126,3 +161,5 @@ def login_user(request):
         }
         
         return render(request, 'login.html', context)
+
+
