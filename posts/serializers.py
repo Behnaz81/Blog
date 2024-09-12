@@ -23,4 +23,12 @@ class PostSerializer(serializers.ModelSerializer):
         read_only_field = ('id', 'writer', 'created_at', 'updated_at')
 
 
+class PostCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'body', 'category', 'image')
+        read_only_field = ('id',)
+
+
         
