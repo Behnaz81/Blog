@@ -12,3 +12,4 @@ class CustomUser(AbstractUser):
 
     role = models.CharField(max_length=100, choices=ROLE_CHOICES, default='Simple User')
     password = models.CharField(max_length=100)
+    profile_picture = models.ImageField(upload_to='images', default='images/default-user.png')
