@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 <!-- Title -->
-{% block title %}پست‌های شما{% endblock %}
+{% block title %}پست‌های من{% endblock %}
 
 <!-- Content -->
 {% block content %}
@@ -21,7 +21,7 @@
             <td>{{ post.category.title }}</td>
             <td>{{ post.created_at }}</td>
             <td>
-                <button type="submit" class="btn btn-danger">حذف</button>
+                <a href="{% url 'my_site:delete-post' post.id %}" class="btn btn-danger">حذف</a>
                 <button type="submit" class="btn btn-success">نظرات</button>
                 <button type="submit" class="btn btn-primary">ویرایش</button>
             </td>
