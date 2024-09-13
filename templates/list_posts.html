@@ -23,7 +23,7 @@
             <td>
                 <a href="{% url 'my_site:delete-post' post.id %}" class="btn btn-danger">حذف</a>
                 <button type="submit" class="btn btn-success">نظرات</button>
-                <button type="submit" class="btn btn-primary">ویرایش</button>
+                <a href="{% url 'my_site:update-post' post.id %}" class="btn btn-primary">ویرایش</a>
             </td>
         </tr>
         {% endfor %}
