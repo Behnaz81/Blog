@@ -17,11 +17,12 @@
         {% for post in posts %}
         <tr class="text-center">
             <td style="width: 5%;"><img src="{{ post.image }}" alt="{{ post.title }}" class="img-fluid"></td>
-            <td>{{ post.title }}</td>
+            <td><a href="{% url 'my_site:detail-post' post.id %}" class="text-decoration-none text-dark">{{ post.title }}</a></td>
             <td>{{ post.category.title }}</td>
             <td>{{ post.created_at }}</td>
             <td>
                 <button type="submit" class="btn btn-danger">حذف</button>
+                <button type="submit" class="btn btn-success">نظرات</button>
                 <button type="submit" class="btn btn-primary">ویرایش</button>
             </td>
         </tr>
