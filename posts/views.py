@@ -53,4 +53,12 @@ class DeletePostView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        return Post.objects.filter(writer=self.request.user, id=self.kwargs['pk'])
+
+
+class UpdatePostView(generics.UpdateAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
         return Post.objects.filter(writer=self.request.user, id=self.kwargs['pk'])    
