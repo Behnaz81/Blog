@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+<!-- Title -->
+{% block title %}پست‌های شما{% endblock %}
+
+<!-- Content -->
+{% block content %}
+    <table class="table w-75 mx-auto rounded">
+        <tr class="text-center">
+            <th scope="col">تصویر</th>
+            <th scope="col">عنوان</th>
+            <th scope="col">دسته بندی</th>
+            <th scope="col">تاریخ انتشار</th>
+            <th scope="col">عملیات</th>
+        </tr>
+
+        {% for post in posts %}
+        <tr class="text-center">
+            <td style="width: 5%;"><img src="{{ post.image }}" alt="{{ post.title }}" class="img-fluid"></td>
+            <td>{{ post.title }}</td>
+            <td>{{ post.category.title }}</td>
+            <td>{{ post.created_at }}</td>
+            <td>
+                <button type="submit" class="btn btn-danger">حذف</button>
+                <button type="submit" class="btn btn-primary">ویرایش</button>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    
+{% endblock %}
