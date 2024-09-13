@@ -37,3 +37,12 @@ class ListPostsView(generics.ListAPIView):
 class RetrievePostView(generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+
+class PostFilteredByUser(generics.ListAPIView):
+    model = Post
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self): 
+        return Post.objects.filter(writer=self.request.user)

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from posts.views import CategoryViewSet, PostFilteredByCategory, CreatePostView, ListPostsView, RetrievePostView
+from posts.views import CategoryViewSet, PostFilteredByCategory, CreatePostView, ListPostsView, RetrievePostView, PostFilteredByUser
 
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet)
@@ -11,5 +11,6 @@ urlpatterns = [
     path('posts-with-category/<int:cat_id>/', PostFilteredByCategory.as_view(), name="posts-filteredby-category"),
     path('posts/list-posts/', ListPostsView.as_view(), name="list-posts"),
     path('posts/<int:pk>/', RetrievePostView.as_view(), name="retrieve-post"),
+    path('posts/posts-with-user/', PostFilteredByUser.as_view(), name="posts-filteredby-user"),
 ]
 
