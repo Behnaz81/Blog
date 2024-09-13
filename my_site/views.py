@@ -129,8 +129,13 @@ def register_user(request):
     if request.method == 'POST':
         register_user_response = requests.post(f'{BASE_API_URL}users/register/', data=request.POST)
         if register_user_response.status_code == 201:
+            user = register_user_response.json().get('user')
             token = register_user_response.json().get('token') 
-            return HttpResponseRedirect(f'http://localhost:8000/')
+            
+            request.session['auth_token'] = token
+            request.session['username'] = user['username']
+
+            return redirect('my_site:index')
         else:
             print(register_user_response.content)
             return HttpResponseRedirect(f'http://localhost:8000/')
@@ -237,7 +242,7 @@ def update_post(request, pk):
 
     if request.method == 'POST':
 
-        update_post_response = requests.patch(f'{BASE_API_URL}posts/update/{pk}/', headers=headers, data=request.POST)
+        update_post_response = requests.patch(f'{BASE_API_URL}posts/update/{pk}/', headers=headers, data=request.POST, files=request.FILES)
 
         if update_post_response.status_code == 200:
             return redirect('my_site:your-posts')
