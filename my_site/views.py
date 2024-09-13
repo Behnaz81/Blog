@@ -1,7 +1,7 @@
 import requests
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
-from comments.serializers import CommentCreateSerializer
+from posts.models import Post
 
 
 BASE_API_URL = 'http://localhost:8000/api/'
@@ -170,7 +170,8 @@ def new_post(request):
     categories = categories_get.json()
 
     context = {
-        'categories': categories
+        'categories': categories,
+        'update': False
     }
 
     if request.method == 'POST':
@@ -226,4 +227,37 @@ def delete_post(request, pk):
         return redirect('my_site:your-posts')
 
     return redirect('my_site:index')
+    
+def update_post(request, pk):
+    token = request.session.get('auth_token')
+
+    headers = {
+            'Authorization': f'Token {token}'
+    }
+
+    if request.method == 'POST':
+
+        update_post_response = requests.patch(f'{BASE_API_URL}posts/update/{pk}/', headers=headers, data=request.POST)
+
+        if update_post_response.status_code == 200:
+            return redirect('my_site:your-posts')
+
+    else:
+        list_posts_response = requests.get(f'{BASE_API_URL}posts/posts-with-user/', headers=headers)
+        list_posts_json = list_posts_response.json()
+
+        # Fetch post details
+        post_get = requests.get(f'{BASE_API_URL}posts/{pk}/')
+        post = post_get.json()
+
+        if post in list_posts_json:
+            context = {
+                'post': post,
+                'update': True
+            }
+
+            return render(request, 'new_post.html', context)
+        
+        return redirect('my_site:your-posts')
+    
     
