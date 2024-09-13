@@ -1,5 +1,5 @@
 from django.urls import path
-from my_site.views import index_view, filtered_posts, detail_post, register_user, login_user, new_post, list_posts
+from my_site.views import index_view, filtered_posts, detail_post, register_user, login_user, new_post, list_posts, delete_post
 
 app_name = "my_site"
 
@@ -11,4 +11,5 @@ urlpatterns = [
     path('login/', login_user, name="login"),
     path('new-post/', new_post, name="new-post"),
     path('your-posts/', list_posts, name="your-posts"),
+    path('delete/<int:pk>/', delete_post, name="delete-post"),
 ]

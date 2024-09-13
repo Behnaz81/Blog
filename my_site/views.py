@@ -212,3 +212,18 @@ def list_posts(request):
         return render(request, 'list_posts.html', context)
     
     return redirect('my_site:index')
+
+def delete_post(request, pk):
+    token = request.session.get('auth_token')
+
+    headers = {
+            'Authorization': f'Token {token}'
+    }
+
+    delete_post_response = requests.delete(f'{BASE_API_URL}posts/delete/{pk}/', headers=headers)
+
+    if delete_post_response.status_code == 204:
+        return redirect('my_site:your-posts')
+
+    return redirect('my_site:index')
+    
