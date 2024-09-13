@@ -192,3 +192,23 @@ def new_post(request):
     else:
         return render(request, 'new_post.html', context)
 
+
+def list_posts(request):
+
+    token = request.session.get('auth_token')
+
+    headers = {
+            'Authorization': f'Token {token}'
+    }
+
+    list_posts_response = requests.get(f'{BASE_API_URL}posts/posts-with-user/', headers=headers)
+    list_posts_json = list_posts_response.json()
+
+    context = {
+        'posts': list_posts_json
+    }
+
+    if list_posts_response.status_code == 200:
+        return render(request, 'list_posts.html', context)
+    
+    return redirect('my_site:index')
