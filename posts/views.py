@@ -46,3 +46,11 @@ class PostFilteredByUser(generics.ListAPIView):
 
     def get_queryset(self): 
         return Post.objects.filter(writer=self.request.user)
+    
+
+class DeletePostView(generics.DestroyAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Post.objects.filter(writer=self.request.user, id=self.kwargs['pk'])    
