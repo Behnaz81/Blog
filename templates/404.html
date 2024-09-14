@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+<!-- Title -->
+{% block title %}یافت نشد{% endblock %}
+
+<!-- Content -->
+{% block content %}
+    <p class="fs-1 titr text-center text-white">404: صفحه مورد نظر یافت نشد!</p>
+    <a href="{% url 'my_site:index' %}" class="text-center text-white w-100 d-block text-decoration-none">به صفحه اصلی برگردید</a>
+{% endblock %}
