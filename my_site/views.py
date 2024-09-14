@@ -111,35 +111,49 @@ def detail_post(request, post_id):
 
     # Fetch post details
     post_get = requests.get(f'{BASE_API_URL}posts/{post_id}/')
-    post = post_get.json()
+    if post_get.status_code == 200:
+        post = post_get.json()
+    else:
+        raise Http404("Post not found!")
 
     # Fetch categories
     categories = fetch_category(request)
 
     # Fetch related posts
     cat_id = post['category']['id']
+    related_posts_json = []
     related_posts = requests.get(f'{BASE_API_URL}posts-with-category/{cat_id}/')
-    related_posts_json = related_posts.json()
-    related_posts_json = [i for i in related_posts_json if not (i['id'] == post['id'])][0:5]
+    if related_posts.status_code == 200:
+        related_posts_json = related_posts.json()
+        related_posts_json = [i for i in related_posts_json if not (i['id'] == post['id'])][0:5]
     
     # Submit a comment
     if request.method == 'POST':
         token = request.session.get('auth_token')
 
-        headers = {
-            'Authorization': f'Token {token}'
-        }
-        
-        create_comment_response = requests.post(f'{BASE_API_URL}comments/comment-add/{post_id}/', data=request.POST, headers=headers)
-        if create_comment_response.status_code == 201:
-            return HttpResponseRedirect(f'http://localhost:8000/post/{post_id}/')
-        
+        if token:
+            headers = {
+                'Authorization': f'Token {token}'
+            }
+            
+            create_comment_response = requests.post(f'{BASE_API_URL}comments/comment-add/{post_id}/', data=request.POST, headers=headers)
+            if create_comment_response.status_code == 201:
+                messages.success(request, 'نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده می‌شود.')
+                return HttpResponseRedirect(f'/post/{post_id}/')
+            
+            else:
+                messages.error(request, 'خطا در ارسال نظر، لطفا دوباره تلاش کنید.')
+                return HttpResponseRedirect(f'/post/{post_id}/')
         else:
-            return HttpResponseRedirect(f'http://localhost:8000/post/{post_id}/')
+            messages.error(request, 'برای ارسال نظر ابتدا وارد شوید.')
+            return HttpResponseRedirect(f'/post/{post_id}/')
+
       
     # Fetch related comments
+    related_comments_json = []
     related_comments = requests.get(f'{BASE_API_URL}comments/comments-filtered-by-post/{post_id}/')
-    related_comments_json = related_comments.json()
+    if related_comments.status_code == 200:
+        related_comments_json = related_comments.json()
 
 
     context = {
