@@ -38,7 +38,7 @@ class LoginView(APIView):
                                  'token': token.key}, 
                                  status=status.HTTP_200_OK)
             
-            return Response({'details':'Invalid data'}, 
+            return Response({'non_field_errors': 'username or password is wrong'}, 
                             status=status.HTTP_401_UNAUTHORIZED)
         
         return Response(serializer.errors, 

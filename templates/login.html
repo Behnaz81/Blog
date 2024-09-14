@@ -19,13 +19,34 @@
 
             <div class="form-group">
                 <label for="username" class="form-label">نام کاربری</label>
-                <input type="text" name="username" id="username" class="form-control">
+                <input type="text" name="username" id="username" class="form-control" value="{% if username %}{{username}}{% endif %}">
             </div>
     
             <div class="form-group mt-3">
                 <label for="password" class="form-label">رمز عبور</label>
                 <input type="password" name="password" id="password" class="form-control">
             </div>
+
+            {% if errors %}
+                <div class="alert alert-danger mt-3">
+                    {% if errors.non_field_errors %}
+                        <div class="text-danger">
+                            {{errors.non_field_errors}}
+                        </div>
+                    {% endif %}
+                    {% if errors.username %}
+                        <div class="text-danger">
+                            {{errors.username}}
+                        </div>
+                    {% endif %}
+                    
+                    {% if errors.password %}
+                        <div class="text-danger">
+                            {{errors.password}}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
 
             <div class="text-center">
                 <button type="submit" class="mt-3 btn btn-outline-dark w-50">ورود</button>

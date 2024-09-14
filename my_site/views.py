@@ -185,19 +185,28 @@ def register_user(request):
         else:
             errors = register_user_response.json()
             custom_errors = {}
-
+            context = {}
+            
             if 'username' in errors:
                 custom_errors['username'] = 'نام کاربری باید منحصر به فرد باشد و حاوی اطلاعات معتبر باشد.'
+            else:
+                context['username'] = request.POST['username']
             if 'password' in errors:
                 if 'Ensure this field has at least 8 characters.' in errors['password']:
                     custom_errors['password'] = 'رمز عبور باید حداقل ۸ کاراکتر باشد.'
+                elif 'This field may not be blank.' in errors['password']:
+                    custom_errors['password'] = 'لطفا رمز عبور مناسب وارد کنید'
                 else:
                     custom_errors['password'] = 'رمز عبور وارد شده صحیح نمی‌باشد.'
-            elif 'password_repeat' in errors:
-                custom_errors['password_repeat'] = 'رمز عبور و تکرار رمز عبور یکی نیست.'
+            if 'non_field_errors' in errors:
+                if 'Passwords do not match' in errors['non_field_errors']:
+                    custom_errors['password_repeat'] = 'رمز عبور و تکرار رمز عبور یکی نیست.'
 
             categories = fetch_category(request)
-            return render(request, 'register.html', {'categories': categories, 'errors': custom_errors})
+            context['categories'] = categories
+            context['errors'] = custom_errors
+            print(context)
+            return render(request, 'register.html', context)
     else:
          # Fetch categories
         categories = fetch_category(request)
@@ -212,18 +221,33 @@ def register_user(request):
 def login_user(request):
 
     if request.method == 'POST':
-        register_user_response = requests.post(f'{BASE_API_URL}users/login/', data=request.POST)
-        if register_user_response.status_code == 200:
-            user = register_user_response.json().get('user')
-            token = register_user_response.json().get('token') 
+        login_user_response = requests.post(f'{BASE_API_URL}users/login/', data=request.POST)
+        if login_user_response.status_code == 200:
+            user = login_user_response.json().get('user')
+            token = login_user_response.json().get('token') 
             
             request.session['auth_token'] = token
             request.session['username'] = user['username']
 
             return redirect('my_site:index')
         else:
-            print(register_user_response.content)
-            return HttpResponseRedirect(f'http://localhost:8000/')
+            errors = login_user_response.json()
+            custom_errors = {}
+
+            if 'non_field_errors' in errors:
+                custom_errors['non_field_errors'] = 'نام کاربری یا رمز عبور نادرست است.'
+            if 'username' in errors:
+                custom_errors['username'] = 'لطفا نام کاربری را وارد کنید.'
+            if 'password' in errors:
+                custom_errors['password'] = 'لطفا رمز عبور را وارد کنید'
+
+            categories = fetch_category(request)
+            context = {
+                'categories': categories, 
+                'errors': custom_errors,
+                'username': request.POST['username']
+            }
+            return render(request, 'login.html', context)
     else:
         # Fetch categories
         categories = fetch_category(request)
