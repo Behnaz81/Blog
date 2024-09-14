@@ -353,21 +353,28 @@ def list_posts(request):
     return redirect('my_site:login')
     
 
-
 # Delete your post
 def delete_post(request, pk):
     token = request.session.get('auth_token')
 
-    headers = {
-            'Authorization': f'Token {token}'
-    }
+    if token:
 
-    delete_post_response = requests.delete(f'{BASE_API_URL}posts/delete/{pk}/', headers=headers)
+        headers = {
+                'Authorization': f'Token {token}'
+        }
 
-    if delete_post_response.status_code == 204:
-        return redirect('my_site:your-posts')
+        delete_post_response = requests.delete(f'{BASE_API_URL}posts/delete/{pk}/', headers=headers)
 
-    return redirect('my_site:index')
+        if delete_post_response.status_code == 204:
+            messages.success(request, 'پست با موفقیت حذف شد.')
+            return redirect('my_site:your-posts')
+        
+        else:
+            messages.error(request, 'خطا در حذف پست‌. لطفاً دوباره تلاش کنید.')
+            return redirect('my_site:index')
+
+    messages.error(request, 'ابتدا وارد شوید.')
+    return redirect('my_site:login')
     
 
 # Update your post
