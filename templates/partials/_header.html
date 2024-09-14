@@ -34,7 +34,7 @@
                         <a href="{% url 'my_site:your-posts' %}" class="dropdown-item text-center">پست‌های من</a>
                         <form method="post">
                             {% csrf_token %}
-                            <button type="submit" class="dropdown-item text-center">خروج</button>
+                            <a href="{% url 'my_site:logout' %}" class="dropdown-item text-center">خروج</a>
                         </form>
                     </div>
                 </div>

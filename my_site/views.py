@@ -6,7 +6,7 @@ from posts.models import Post
 
 BASE_API_URL = 'http://localhost:8000/api/'
 
-
+# Logout
 def logout_user(request):
 
     token = request.session.get('auth_token')
@@ -19,10 +19,10 @@ def logout_user(request):
     if logout_response.status_code == 200:
         del request.session['auth_token']
         del request.session['username']
-        print('deleted')
         return redirect('my_site:index')
+    
     else:
-        return HttpResponseRedirect('http://localhost:8000/')
+        return redirect('my_site:index')
 
 
 def index_view(request):
@@ -122,7 +122,7 @@ def register_user(request):
     categories_get = requests.get('http://localhost:8000/api/categories/')
     categories = categories_get.json()
 
-    context = {
+    context = { 
         'categories': categories
     }
 
@@ -134,7 +134,7 @@ def register_user(request):
             
             request.session['auth_token'] = token
             request.session['username'] = user['username']
-
+ 
             return redirect('my_site:index')
         else:
             print(register_user_response.content)
