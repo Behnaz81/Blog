@@ -29,17 +29,19 @@ def logout_user(request):
         return redirect('my_site:login')
 
 
-# Fetch categories
 def fetch_category(request):
-
     categories = cache.get('categories')
 
     if not categories:
         try:
             categories_response = requests.get(f'{BASE_API_URL}categories/')
-            categories_json = categories_response.json()
-            cache.set('categories', categories_json, timeout=60*60)
-            print('api called')
+            if categories_response.status_code == 200:
+                categories_json = categories_response.json()
+                cache.set('categories', categories_json, timeout=60*60)  
+                categories = categories_json
+                print('API called for categories.')
+            else:
+                categories = [] 
 
         except requests.RequestException:
             categories = []
