@@ -1,4 +1,13 @@
 <div class="row justify-content-start text-center me-5 pe-5">
+    
+    {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} w-75 mx-auto">
+                    {{message}}
+                </div>
+            {% endfor %}
+    {% endif %}
+
     {% if posts %}
         {% for post in posts %}
             <div class="col-lg-2 col-sm-4 col-md-3 card m-2" style="height: 350px;">

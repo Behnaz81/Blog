@@ -330,21 +330,28 @@ def list_posts(request):
 
     token = request.session.get('auth_token')
 
-    headers = {
-            'Authorization': f'Token {token}'
-    }
+    if token:
 
-    list_posts_response = requests.get(f'{BASE_API_URL}posts/posts-with-user/', headers=headers)
-    list_posts_json = list_posts_response.json()
+        headers = {
+                'Authorization': f'Token {token}'
+        }
 
-    context = {
-        'posts': list_posts_json
-    }
+        list_posts_response = requests.get(f'{BASE_API_URL}posts/posts-with-user/', headers=headers)
 
-    if list_posts_response.status_code == 200:
-        return render(request, 'list_posts.html', context)
+        if list_posts_response.status_code == 200:
+            list_posts_json = list_posts_response.json()
+            context = {
+                'posts': list_posts_json
+            }
+            return render(request, 'list_posts.html', context)
+        
+        else:
+            messages.error(request, 'خطا در بارگذاری پست‌ها. لطفاً دوباره تلاش کنید.')
+            return redirect('my_site:index')
     
-    return redirect('my_site:index')
+    messages.error(request, 'ابتدا وارد شوید.')
+    return redirect('my_site:login')
+    
 
 
 # Delete your post
