@@ -213,7 +213,8 @@ def register_user(request):
         categories = fetch_category(request)
 
         context = { 
-            'categories': categories
+            'categories': categories,
+            'hide_auth_buttons': True
         }
         return render(request, 'register.html', context) 
 
@@ -259,7 +260,8 @@ def login_user(request):
         categories = fetch_category(request)
 
         context = {
-            'categories': categories
+            'categories': categories,
+            'hide_auth_buttons': True
         }
         
         return render(request, 'login.html', context)        

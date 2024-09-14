@@ -41,8 +41,10 @@
 
             <!-- If not logged in -->
             {% else %}
-                <a href="{% url 'my_site:register' %}" type="button" class="btn btn-outline-light px-4">ثبت نام</a>
-                <a href="{% url 'my_site:login' %}" type="button" class="btn btn-outline-light px-4 mx-2">ورود</a>
+                {% if not hide_auth_buttons %}
+                    <a href="{% url 'my_site:register' %}" type="button" class="btn btn-outline-light px-4">ثبت نام</a>
+                    <a href="{% url 'my_site:login' %}" type="button" class="btn btn-outline-light px-4 mx-2">ورود</a>
+                {% endif %}
             {% endif %}
         </div>
 
