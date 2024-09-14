@@ -2,6 +2,7 @@ import requests
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.core.cache import cache
+from django.contrib import messages
 from posts.models import Post
 
 
@@ -9,21 +10,23 @@ BASE_API_URL = 'http://localhost:8000/api/'
 
 # Logout
 def logout_user(request):
-
     token = request.session.get('auth_token')
-    headers = {
-        'Authorization': f'Token {token}'
-    }
 
-    logout_response = requests.post(f'{BASE_API_URL}users/logout/', headers=headers)
+    if token:
+        headers = {
+            'Authorization': f'Token {token}'
+        }
 
-    if logout_response.status_code == 200:
-        del request.session['auth_token']
-        del request.session['username']
-        return redirect('my_site:index')
-    
+        logout_response = requests.post(f'{BASE_API_URL}users/logout/', headers=headers)
+
+        if logout_response.status_code == 200:
+            del request.session['auth_token']
+            del request.session['username']
+            return redirect('my_site:index')
+        
     else:
-        return redirect('my_site:index')
+        messages.error(request, 'ابتدا وارد شوید.')
+        return redirect('my_site:login')
 
 
 # Fetch categories
@@ -64,16 +67,15 @@ def index_view(request):
 
     return render(request, 'index.html', context)
 
-
+# Filter posts according to categories
 def filtered_posts(request, cat_id):
 
     # Fetch posts with a known category
-    posts_get = requests.get(f'http://localhost:8000/api/posts-with-category/{cat_id}/')
+    posts_get = requests.get(f'{BASE_API_URL}posts-with-category/{cat_id}/')
     posts = posts_get.json()
 
     # Fetch categories
-    categories_get = requests.get('http://localhost:8000/api/categories/')
-    categories = categories_get.json()
+    categories = fetch_category(request)
 
     context = {
         'posts': posts,
@@ -82,6 +84,8 @@ def filtered_posts(request, cat_id):
 
     return render(request, 'index.html', context)
 
+
+# Detail page
 def detail_post(request, post_id):
 
     # Fetch post details
@@ -89,17 +93,15 @@ def detail_post(request, post_id):
     post = post_get.json()
 
     # Fetch categories
-    categories_get = requests.get('http://localhost:8000/api/categories/')
-    cat_id = post['category']['id']
-    categories = categories_get.json()
+    categories = fetch_category(request)
 
     # Fetch related posts
-    related_posts = requests.get(f'http://localhost:8000/api/posts-with-category/{cat_id}/')
+    cat_id = post['category']['id']
+    related_posts = requests.get(f'{BASE_API_URL}posts-with-category/{cat_id}/')
     related_posts_json = related_posts.json()
     related_posts_json = [i for i in related_posts_json if not (i['id'] == post['id'])][0:5]
     
     # Submit a comment
-    form_errors=[]
     if request.method == 'POST':
         token = request.session.get('auth_token')
 
@@ -110,9 +112,12 @@ def detail_post(request, post_id):
         create_comment_response = requests.post(f'{BASE_API_URL}comments/comment-add/{post_id}/', data=request.POST, headers=headers)
         if create_comment_response.status_code == 201:
             return HttpResponseRedirect(f'http://localhost:8000/post/{post_id}/')
+        
+        else:
+            return HttpResponseRedirect(f'http://localhost:8000/post/{post_id}/')
       
     # Fetch related comments
-    related_comments = requests.get(f'http://localhost:8000/api/comments/comments-filtered-by-post/{post_id}/')
+    related_comments = requests.get(f'{BASE_API_URL}comments/comments-filtered-by-post/{post_id}/')
     related_comments_json = related_comments.json()
 
 
@@ -121,22 +126,13 @@ def detail_post(request, post_id):
         'categories': categories,
         'related_posts': related_posts_json,
         'related_comments': related_comments_json[0:10],
-        'related_comments_count': len(related_comments_json),
-        'form_errors': form_errors
+        'related_comments_count': len(related_comments_json)
     }
 
     return render(request, 'post_details.html', context)
 
-
+# Register User
 def register_user(request):
-
-    # Fetch categories
-    categories_get = requests.get('http://localhost:8000/api/categories/')
-    categories = categories_get.json()
-
-    context = { 
-        'categories': categories
-    }
 
     if request.method == 'POST':
         register_user_response = requests.post(f'{BASE_API_URL}users/register/', data=request.POST)
@@ -148,13 +144,21 @@ def register_user(request):
             request.session['username'] = user['username']
  
             return redirect('my_site:index')
+        
         else:
             print(register_user_response.content)
-            return HttpResponseRedirect(f'http://localhost:8000/')
+            return redirect('my_site:index')
     else:
+         # Fetch categories
+        categories = fetch_category(request)
+
+        context = { 
+            'categories': categories
+        }
         return render(request, 'register.html', context) 
 
 
+# Login
 def login_user(request):
 
     if request.method == 'POST':
@@ -172,8 +176,7 @@ def login_user(request):
             return HttpResponseRedirect(f'http://localhost:8000/')
     else:
         # Fetch categories
-        categories_get = requests.get('http://localhost:8000/api/categories/')
-        categories = categories_get.json()
+        categories = fetch_category(request)
 
         context = {
             'categories': categories
@@ -182,9 +185,11 @@ def login_user(request):
         return render(request, 'login.html', context)
 
 
+# Create new post
 def new_post(request):
-    categories_get = requests.get('http://localhost:8000/api/categories/')
-    categories = categories_get.json()
+
+    # Fetch Categories
+    categories = fetch_category(request)
 
     context = {
         'categories': categories,
@@ -211,6 +216,7 @@ def new_post(request):
         return render(request, 'new_post.html', context)
 
 
+# List Posts
 def list_posts(request):
 
     token = request.session.get('auth_token')
@@ -231,6 +237,8 @@ def list_posts(request):
     
     return redirect('my_site:index')
 
+
+# Delete your post
 def delete_post(request, pk):
     token = request.session.get('auth_token')
 
@@ -245,6 +253,8 @@ def delete_post(request, pk):
 
     return redirect('my_site:index')
     
+
+# Update your post
 def update_post(request, pk):
     token = request.session.get('auth_token')
 

@@ -7,6 +7,13 @@
 {% block content %}
     <form method="POST" class="bg-light w-25 mx-auto p-3 rounded row m-5">
         {% csrf_token %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
 
         <div class="w-100">
 
