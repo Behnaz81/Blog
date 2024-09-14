@@ -51,9 +51,6 @@ def fetch_category(request):
 
 # Index Page
 def index_view(request):
-    
-    if request.method == 'POST':
-        return logout_user(request)
 
     try:
         # Fetch all posts
@@ -379,34 +376,84 @@ def delete_post(request, pk):
 
 # Update your post
 def update_post(request, pk):
-    token = request.session.get('auth_token')
 
-    headers = {
-            'Authorization': f'Token {token}'
+    categories = fetch_category(request)
+
+    context = {
+        'update': True,
+        'categories': categories
     }
 
-    if request.method == 'POST':
+    token = request.session.get('auth_token')
 
-        update_post_response = requests.patch(f'{BASE_API_URL}posts/update/{pk}/', headers=headers, data=request.POST, files=request.FILES)
+    if token:
+        headers = { 
+                'Authorization': f'Token {token}'
+        }
 
-        if update_post_response.status_code == 200:
-            return redirect('my_site:your-posts')
+        if request.method == 'POST':
 
-    else:
-        list_posts_response = requests.get(f'{BASE_API_URL}posts/posts-with-user/', headers=headers)
-        list_posts_json = list_posts_response.json()
+            update_post_response = requests.patch(f'{BASE_API_URL}posts/update/{pk}/', headers=headers, data=request.POST, files=request.FILES)
 
-        # Fetch post details
-        post_get = requests.get(f'{BASE_API_URL}posts/{pk}/')
-        post = post_get.json()
+            if update_post_response.status_code == 200:
+                messages.success(request, 'پست با موفقیت به روزرسانی شد.')
+                return redirect('my_site:your-posts')
+            
+            else:
+                errors = update_post_response.json()
+                custom_errors = {}
 
-        if post in list_posts_json:
-            context = {
-                'post': post,
-                'update': True
-            }
+                if 'title' in errors:
+                    if 'post with this title already exists.' in errors['title']:
+                        custom_errors['title'] = 'این عنوان وجود دارد.'
+                    if 'This field may not be blank.' in errors['title']:
+                        custom_errors['title'] = 'فیلد موضوع اجباری است.'
 
-            return render(request, 'new_post.html', context)
+                if 'category' in errors:
+                    if 'Incorrect type. Expected pk value, received str.' in errors['category']:
+                        custom_errors['category'] = 'لطفا یک دسته بندی انتخاب کنید.'
+
+                if 'body' in errors:
+                    if 'This field may not be blank.' in errors['body']:
+                        custom_errors['body'] = 'فیلد متن اجباری است.'
+
+                print(request.POST.get('title'))
+
+                context.update({
+                    'title': request.POST.get('title', ''),
+                    'category': request.POST.get('category', ''),
+                    'body': request.POST.get('body', ''),
+                    'errors': custom_errors
+                })
+                
+                return render(request, 'new_post.html', context)
+
+        else:
+
+            # Fetch post details
+            post_get = requests.get(f'{BASE_API_URL}posts/{pk}/')
+
+            if post_get.status_code == 200:
+                post = post_get.json()
+                
+                username = request.session.get('username')
+
+                categories = fetch_category(request)
+
+                if post['writer']['username'] == username:
+                    context = {
+                        'post': post,
+                        'update': True,
+                        'categories': categories
+                    }
+
+                    return render(request, 'new_post.html', context)
+                
+            
+                messages.error(request, 'شما به این پست دسترسی ندارید.')
+                return redirect('my_site:your-posts')
+            
+            raise Http404
         
-        return redirect('my_site:your-posts')
-    
+    messages.error(request, 'ابتدا وارد شوید.')
+    return redirect('my_site:login')
