@@ -71,8 +71,10 @@
 
         <!-- Comments To Show -->
         <p class="fs-3">نظرات ({{ related_comments_count }})</p>
+        {% csrf_token %}
+
         {% if related_comments %}
-            <div class="">    
+            <div class="">   
                     {% for comment in related_comments %}
                         <hr>
                             <div class="row mb-4 d-flex align-items-center g-0 w-50">
@@ -96,6 +98,15 @@
 
         <hr>
         
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+    
         <!-- Submit comment -->
         {% include 'comment_form.html' %}
         
