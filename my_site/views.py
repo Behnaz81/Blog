@@ -423,6 +423,7 @@ def update_post(request, pk):
                     'title': request.POST.get('title', ''),
                     'category': request.POST.get('category', ''),
                     'body': request.POST.get('body', ''),
+                    'category': request.POST.get('category', ''),
                     'errors': custom_errors
                 })
                 
