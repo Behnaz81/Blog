@@ -166,6 +166,8 @@ def detail_post(request, post_id):
 
     return render(request, 'post_details.html', context)
 
+
+
 # Register User
 def register_user(request):
 
@@ -181,8 +183,21 @@ def register_user(request):
             return redirect('my_site:index')
         
         else:
-            print(register_user_response.content)
-            return redirect('my_site:index')
+            errors = register_user_response.json()
+            custom_errors = {}
+
+            if 'username' in errors:
+                custom_errors['username'] = 'نام کاربری باید منحصر به فرد باشد و حاوی اطلاعات معتبر باشد.'
+            if 'password' in errors:
+                if 'Ensure this field has at least 8 characters.' in errors['password']:
+                    custom_errors['password'] = 'رمز عبور باید حداقل ۸ کاراکتر باشد.'
+                else:
+                    custom_errors['password'] = 'رمز عبور وارد شده صحیح نمی‌باشد.'
+            elif 'password_repeat' in errors:
+                custom_errors['password_repeat'] = 'رمز عبور و تکرار رمز عبور یکی نیست.'
+
+            categories = fetch_category(request)
+            return render(request, 'register.html', {'categories': categories, 'errors': custom_errors})
     else:
          # Fetch categories
         categories = fetch_category(request)
