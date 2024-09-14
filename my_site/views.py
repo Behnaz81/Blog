@@ -1,6 +1,7 @@
 import requests
 from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
+from django.core.cache import cache
 from posts.models import Post
 
 
@@ -25,15 +26,27 @@ def logout_user(request):
         return redirect('my_site:index')
 
 
+# Fetch categories
+def fetch_category(request):
+
+    categories = cache.get('categories')
+
+    if not categories:
+        try:
+            categories_response = requests.get(f'{BASE_API_URL}categories/')
+            categories_json = categories_response.json()
+            cache.set('categories', categories_json, timeout=60*60)
+            print('api called')
+
+        except requests.RequestException:
+            categories = []
+
+    return categories
+
+
+# Index Page
 def index_view(request):
-
-    token = request.session.get('auth_token')
-
-    if token:
-        logged_in = True
-    else:
-        logged_in = False
-
+    
     if request.method == 'POST':
         logout_user(request)
 
@@ -42,16 +55,15 @@ def index_view(request):
     posts = posts_get.json()
 
     # Fetch categories
-    categories_get = requests.get('http://localhost:8000/api/categories/')
-    categories = categories_get.json()
+    categories = fetch_category(request)
 
     context = {
         'posts': posts,
-        'categories': categories,
-        'logged_in': logged_in
+        'categories': categories
     }
 
     return render(request, 'index.html', context)
+
 
 def filtered_posts(request, cat_id):
 
