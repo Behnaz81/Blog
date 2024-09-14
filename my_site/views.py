@@ -53,11 +53,20 @@ def fetch_category(request):
 def index_view(request):
     
     if request.method == 'POST':
-        logout_user(request)
+        return logout_user(request)
 
-    # Fetch all posts
-    posts_get = requests.get(f'{BASE_API_URL}posts/list-posts/')
-    posts = posts_get.json()
+    try:
+        # Fetch all posts
+        posts_get = requests.get(f'{BASE_API_URL}posts/list-posts/')
+
+        if posts_get.status_code == 200:
+            posts = posts_get.json()
+
+        else:
+            posts = []
+
+    except requests.RequestException:
+        posts = []
 
     # Fetch categories
     categories = fetch_category(request)
@@ -68,6 +77,7 @@ def index_view(request):
     }
 
     return render(request, 'index.html', context)
+
 
 # Filter posts according to categories
 def filtered_posts(request, cat_id):
