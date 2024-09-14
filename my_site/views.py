@@ -205,7 +205,6 @@ def register_user(request):
             categories = fetch_category(request)
             context['categories'] = categories
             context['errors'] = custom_errors
-            print(context)
             return render(request, 'register.html', context)
     else:
          # Fetch categories
@@ -269,25 +268,61 @@ def new_post(request):
         'categories': categories,
         'update': False
     }
+    
+    token = request.session.get('auth_token')
 
     if request.method == 'POST':
-        token = request.session.get('auth_token')
 
-        headers = {
-            'Authorization': f'Token {token}'
-        }
-        
-        create_post_respone = requests.post(f'{BASE_API_URL}posts/new-post/', headers=headers, data=request.POST, files=request.FILES)
+        if token:
 
-        if create_post_respone.status_code == 201:
-            return redirect('my_site:index')
-        
+            headers = {
+                'Authorization': f'Token {token}'
+            }
+            
+            create_post_respone = requests.post(f'{BASE_API_URL}posts/new-post/', headers=headers, data=request.POST, files=request.FILES)
+
+            if create_post_respone.status_code == 201:
+                messages.success(request, 'پست جدید با موفقیت ایجاد شد.')
+                return redirect('my_site:your-posts')
+            
+            else:
+                errors = create_post_respone.json()
+                custom_errors = {}
+
+                if 'title' in errors:
+                    if 'post with this title already exists.' in errors['title']:
+                        custom_errors['title'] = 'این عنوان وجود دارد.'
+                    if 'This field may not be blank.' in errors['title']:
+                        custom_errors['title'] = 'فیلد موضوع اجباری است.'
+
+                if 'category' in errors:
+                    if 'Incorrect type. Expected pk value, received str.' in errors['category']:
+                        custom_errors['category'] = 'لطفا یک دسته بندی انتخاب کنید.'
+
+                if 'body' in errors:
+                    if 'This field may not be blank.' in errors['body']:
+                        custom_errors['body'] = 'فیلد متن اجباری است.'
+
+                context.update({
+                    'title': request.POST.get('title', ''),
+                    'category': request.POST.get('category', ''),
+                    'body': request.POST.get('body', ''),
+                    'errors': custom_errors
+                })
+                
+                return render(request, 'new_post.html', context)
         else:
-            print(create_post_respone.content)
-            return redirect('my_site:index')
+            messages.error(request, 'ابتدا وارد شوید.')
+            return redirect('my_site:login')
     
     else:
-        return render(request, 'new_post.html', context)
+
+        if token:
+            return render(request, 'new_post.html', context)
+        
+        else:
+            messages.error(request, 'ابتدا وارد شوید.')
+            return redirect('my_site:login')
 
 
 # List Posts

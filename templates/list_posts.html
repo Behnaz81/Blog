@@ -5,7 +5,15 @@
 
 <!-- Content -->
 {% block content %}
+    {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %} w-75 mx-auto">
+                    {{message}}
+                </div>
+            {% endfor %}
+    {% endif %}
     <table class="table w-75 mx-auto rounded">
+
         <tr class="text-center">
             <th scope="col">تصویر</th>
             <th scope="col">عنوان</th>
