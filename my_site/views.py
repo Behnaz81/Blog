@@ -167,7 +167,12 @@ def detail_post(request, post_id):
 
 # Register User
 def register_user(request):
+    
+    token = request.session.get('auth_token')
 
+    if token:
+        return redirect('my_site:your-posts')
+    
     if request.method == 'POST':
         register_user_response = requests.post(f'{BASE_API_URL}users/register/', data=request.POST)
         if register_user_response.status_code == 201:
@@ -216,6 +221,11 @@ def register_user(request):
 # Login
 def login_user(request):
 
+    token = request.session.get('auth_token')
+
+    if token:
+        return redirect('my_site:your-posts')
+
     if request.method == 'POST':
         login_user_response = requests.post(f'{BASE_API_URL}users/login/', data=request.POST)
         if login_user_response.status_code == 200:
@@ -252,7 +262,7 @@ def login_user(request):
             'categories': categories
         }
         
-        return render(request, 'login.html', context)
+        return render(request, 'login.html', context)        
 
 
 # Create new post
