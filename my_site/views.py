@@ -1,6 +1,6 @@
 import requests
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.core.cache import cache
 from django.contrib import messages
 from posts.models import Post
@@ -78,13 +78,21 @@ def index_view(request):
 
     return render(request, 'index.html', context)
 
-
-# Filter posts according to categories
+# Filter based on categories
 def filtered_posts(request, cat_id):
+    try:
+        posts_get = requests.get(f'{BASE_API_URL}posts-with-category/{cat_id}/')
 
-    # Fetch posts with a known category
-    posts_get = requests.get(f'{BASE_API_URL}posts-with-category/{cat_id}/')
-    posts = posts_get.json()
+        if posts_get.status_code == 200:
+            posts = posts_get.json()
+
+            if not posts:
+                raise Http404("No posts found for this category")
+        else:
+            raise Http404("Category not found")  
+
+    except requests.RequestException:
+        raise Http404("Error fetching posts for this category")
 
     # Fetch categories
     categories = fetch_category(request)
@@ -95,6 +103,7 @@ def filtered_posts(request, cat_id):
     }
 
     return render(request, 'index.html', context)
+
 
 
 # Detail page
@@ -298,5 +307,4 @@ def update_post(request, pk):
             return render(request, 'new_post.html', context)
         
         return redirect('my_site:your-posts')
-    
     
