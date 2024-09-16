@@ -39,7 +39,6 @@ def fetch_category(request):
                 categories_json = categories_response.json()
                 cache.set('categories', categories_json, timeout=60*60)  
                 categories = categories_json
-                print('API called for categories.')
             else:
                 categories = [] 
 
