@@ -45,3 +45,12 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'profile_picture')
         read_only_fields = ('username', 'profile_picture')
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    last_login = serializers.DateTimeField(format="%d %b %Y %H:%M:%S")
+
+    class Meta:
+        model = User
+        fields = ("id", "last_login", "username", "first_name", "last_name", "email", "profile_picture")
+        read_only_fields = ("id", "last_login")
