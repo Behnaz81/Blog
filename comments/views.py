@@ -1,6 +1,8 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from comments.serializers import CommentSerializer, CommentCreateSerializer, CommentManagementSerializer
 from comments.models import Comment
@@ -52,3 +54,25 @@ class CommentsPostBySeenStatus(generics.ListAPIView):
             queryset = queryset.filter(seen=seen_status)
 
         return queryset
+    
+
+class CommentsDisplayView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, comment_id):
+        try:
+            comment = Comment.objects.get(id=comment_id)
+        except Comment.DoesNotExist:
+            return Response({'error': 'Comment not found'}, status=404)
+        
+        if request.user != comment.post.writer:
+            return Response({'error': 'You do not have permission to modify this comment'}, status=403)
+
+        comment.display = not(comment.display)
+        comment.seen = True
+        comment.save()
+
+        return Response(CommentSerializer(comment).data, status=200)
+
+
+            
