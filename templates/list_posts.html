@@ -30,7 +30,7 @@
             <td>{{ post.created_at }}</td>
             <td>
                 <a href="{% url 'my_site:delete-post' post.id %}" class="btn btn-danger">حذف</a>
-                <button type="submit" class="btn btn-success">نظرات</button>
+                <a href="{% url 'my_site:comments-management' post.id %}" class="btn btn-success">نظرات</a>
                 <a href="{% url 'my_site:update-post' post.id %}" class="btn btn-primary">ویرایش</a>
             </td>
         </tr>
