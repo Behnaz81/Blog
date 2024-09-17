@@ -469,3 +469,74 @@ def update_post(request, pk):
         
     messages.error(request, 'ابتدا وارد شوید.')
     return redirect('my_site:login')
+
+
+def profile(request):
+
+    categories = fetch_category(request)
+
+    context = {
+        'categories': categories
+    }
+
+    token = request.session.get('auth_token')
+
+    if token:
+
+        headers = { 
+                'Authorization': f'Token {token}'
+        }
+
+        if request.method == 'POST':
+            
+            updtate_profile_response = requests.patch(f'{BASE_API_URL}users/profile/', headers=headers, data=request.POST, files=request.FILES)
+
+            if updtate_profile_response.status_code == 200:
+                messages.success(request, 'اطلاعات با موفقیت ویرایش شد.')
+                return redirect('my_site:profile')
+            
+            else:
+                errors = updtate_profile_response.json()
+                custom_errors = {}
+
+                print(errors)
+                
+                if 'username' in errors:
+                    custom_errors['username'] = 'نام کاربری باید منحصر به فرد باشد و حاوی اطلاعات معتبر باشد.'
+
+                context.update({
+                    'errors': custom_errors,
+                    'profile': {
+                    'username': request.POST.get('username', ''),
+                    'first_name': request.POST.get('first_name', ''),
+                    'last_name': request.POST.get('last_name', ''),
+                    'email': request.POST.get('email', '')                      
+                    }
+                })
+
+                return render(request, 'profile.html', context)
+            
+
+        profile_response = requests.get(f'{BASE_API_URL}users/profile/', headers=headers)
+
+        if profile_response.status_code == 200:
+            profile_response_json = profile_response.json()
+
+            context.update({
+                'profile': profile_response_json
+            })
+            
+            return render(request, 'profile.html', context)
+        
+        else:
+            errors = profile_response.json()
+            print(errors)
+            messages.error('مشکلی در برقراری ارتباط رخ داد. لطفا دوباره تلاش کنید.')
+            return redirect('my_site:index')
+        
+
+    messages.error('ابتدا وارد شوید.')
+    return redirect('my_site:login')
+        
+                
+
