@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+<!-- Title -->
+{% block title %}{{user.usernamr}}{% endblock %}
+
+<!-- Content -->
+{% block content %}
+
+    <div class="text-white text-center">
+        <div>
+            <img src="{{ profile.profile_picture }}" alt="{{ profile.username }}" class="rounded-circle img-fluid object-fit-contain" style="width: 200px; height: 200px;">
+        </div>
+        <div class="w-25 mx-auto mt-4">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                        {{message}}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        {% if errors %}
+            <div class="alert alert-danger mt-3 w-25 mx-auto">
+                {% if errors.non_field_errors %}
+                    <div class="text-danger">
+                        {{errors.non_field_errors}}
+                    </div>
+                {% endif %}
+                {% if errors.username %}
+                    <div class="text-danger">
+                        {{errors.username}}
+                    </div>
+                {% endif %}
+                
+                {% if errors.password %}
+                    <div class="text-danger">
+                        {{errors.password}}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" class="text-center mt-3 w-25 mx-auto">
+            {% csrf_token %}
+            <input type="file" name="profile_picture" id="profile_picture" accept="image/jpeg" class="form-control mt-2">
+            <input type="text" name="username" id="username" value="{{profile.username}}" class="form-control mt-2">
+            <input type="text" name="first_name" id="first_name" value="{{profile.first_name}}" placeholder="نام" class="form-control mt-2">
+            <input type="text" name="last_name" id="last_name" value="{{profile.last_name}}" placeholder="نام خانوادگی" class="form-control mt-2">
+            <input type="email" name="email" id="email" value="{{profile.email}}" placeholder="ایمیل" class="form-control mt-2">
+
+            <button type="submit" class="btn btn-outline-light mt-2">ذخیره تغییرات</button>
+        </form>
+
+
+       
+        <!-- {{user.username}}
+        {{user.first_name}}
+        {{user.last_name}}
+        {{user.last_login}}
+        {{user.email}}
+        {{user.profile_picture}} -->
+    </div>
+{% endblock %}
