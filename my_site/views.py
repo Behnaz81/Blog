@@ -348,8 +348,10 @@ def list_posts(request):
 
         if list_posts_response.status_code == 200:
             list_posts_json = list_posts_response.json()
+            categories = fetch_category(request)
             context = {
-                'posts': list_posts_json
+                'posts': list_posts_json,
+                'categories': categories
             }
             return render(request, 'list_posts.html', context)
         
