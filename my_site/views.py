@@ -539,4 +539,56 @@ def profile(request):
     return redirect('my_site:login')
         
                 
+def comments_management(request, post_id):
+    token = request.session.get('auth_token')
+
+    categories = fetch_category(request)
+
+    context = {
+        'categories': categories
+    }
+
+    post_get = requests.get(f'{BASE_API_URL}posts/{post_id}/')
+    
+    if post_get.status_code == 200:
+        post = post_get.json()
+    else:
+        raise Http404("Post not found!")
+
+    if token:
+
+        headers = {
+            'Authorization': f'Token {token}'
+        }
+
+        comments_seen_response = requests.get(f'{BASE_API_URL}comments/comments-seen-status/{post_id}/?seen=true', headers=headers)
+        comments_notseen_response = requests.get(f'{BASE_API_URL}comments/comments-seen-status/{post_id}/?seen=false', headers=headers)
+
+        print(comments_notseen_response.json())
+
+        if comments_seen_response.status_code == 200 and comments_notseen_response.status_code == 200:
+            comments_seen = comments_seen_response.json()
+            comments_notseen = comments_notseen_response.json()
+
+            context.update({
+                'comments_seen': comments_seen,
+                'comments_notseen': comments_notseen,
+                'post': post
+            })
+
+            return render(request, 'comments_management.html', context)
+        
+        elif comments_notseen_response.status_code == 403:
+            return render(request, '403.html')
+
+        else:
+            print(comments_notseen_response.json())
+            print(comments_seen_response.json())
+            return redirect('my_site:your-posts')
+    
+    else:
+        messages.error('ابتدا وارد شوید.')
+        return redirect('my_site:login')
+
+            
 
