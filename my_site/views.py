@@ -538,10 +538,9 @@ def profile(request):
     messages.error('ابتدا وارد شوید.')
     return redirect('my_site:login')
         
-                
-def comments_management(request, post_id):
-    token = request.session.get('auth_token')
 
+def comments_management(request, post_id, comment_id=None):
+    token = request.session.get('auth_token')
     categories = fetch_category(request)
 
     context = {
@@ -549,46 +548,49 @@ def comments_management(request, post_id):
     }
 
     post_get = requests.get(f'{BASE_API_URL}posts/{post_id}/')
-    
     if post_get.status_code == 200:
         post = post_get.json()
     else:
         raise Http404("Post not found!")
 
-    if token:
-
-        headers = {
-            'Authorization': f'Token {token}'
-        }
-
-        comments_seen_response = requests.get(f'{BASE_API_URL}comments/comments-seen-status/{post_id}/?seen=true', headers=headers)
-        comments_notseen_response = requests.get(f'{BASE_API_URL}comments/comments-seen-status/{post_id}/?seen=false', headers=headers)
-
-        print(comments_notseen_response.json())
-
-        if comments_seen_response.status_code == 200 and comments_notseen_response.status_code == 200:
-            comments_seen = comments_seen_response.json()
-            comments_notseen = comments_notseen_response.json()
-
-            context.update({
-                'comments_seen': comments_seen,
-                'comments_notseen': comments_notseen,
-                'post': post
-            })
-
-            return render(request, 'comments_management.html', context)
-        
-        elif comments_notseen_response.status_code == 403:
-            return render(request, '403.html')
-
-        else:
-            print(comments_notseen_response.json())
-            print(comments_seen_response.json())
-            return redirect('my_site:your-posts')
-    
-    else:
-        messages.error('ابتدا وارد شوید.')
+    if not token:
+        messages.error(request, 'ابتدا وارد شوید.')
         return redirect('my_site:login')
 
-            
+    headers = {
+        'Authorization': f'Token {token}'
+    }
 
+    if request.method == 'POST' and comment_id:
+        comment_display_response = requests.patch(f'{BASE_API_URL}comments/comments-display/{comment_id}/', headers=headers)
+        
+        if comment_display_response.status_code == 200:
+            messages.success(request, 'با موفقیت انجام شد.')
+        else:
+            print(comment_display_response.json())
+        
+        return redirect('my_site:comments-management', post_id=post_id)
+
+    comments_seen_response = requests.get(f'{BASE_API_URL}comments/comments-seen-status/{post_id}/?seen=true', headers=headers)
+    comments_notseen_response = requests.get(f'{BASE_API_URL}comments/comments-seen-status/{post_id}/?seen=false', headers=headers)
+    
+    if comments_seen_response.status_code == 200 and comments_notseen_response.status_code == 200:
+        comments_seen = comments_seen_response.json()
+        comments_notseen = comments_notseen_response.json()
+
+        context.update({
+            'comments_seen': comments_seen,
+            'comments_notseen': comments_notseen,
+            'post': post
+        })
+
+        return render(request, 'comments_management.html', context)
+
+    elif comments_notseen_response.status_code == 403:
+        return render(request, '403.html')
+
+    else:
+        print(comments_notseen_response.json())
+        print(comments_seen_response.json())
+        return redirect('my_site:your-posts')
+            

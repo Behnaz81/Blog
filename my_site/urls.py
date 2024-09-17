@@ -15,5 +15,6 @@ urlpatterns = [
     path('delete/<int:pk>/', delete_post, name="delete-post"),
     path('update/<int:pk>/', update_post, name="update-post"),
     path('profile/', profile, name="profile"),
-    path('comments-management/<int:post_id>/', comments_management, name="comments-management"),
+    path('comments-management/<int:post_id>/', comments_management, name='comments-management'),
+    path('comments-management/<int:post_id>/<int:comment_id>/', comments_management, name='comments-management-display'),
 ]
