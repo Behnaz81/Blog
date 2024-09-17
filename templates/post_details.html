@@ -48,7 +48,7 @@
 
             <div class="col-lg-2 col-sm-4 col-md-3 card m-2" style="height: 350px;">
 
-                <img src="{{ related_post.image }}" class="card-img-top img-fluid mt-2 h-50" alt="{{ related_post.title }}">
+                <img src="{{ related_post.image }}" class="card-img-top img-fluid mt-2 h-50 object-fit-contain" alt="{{ related_post.title }}">
 
                 <div class="card-body text-center">
                     <h5 class="card-title titr fs-4 mb-3">{{ related_post.title }}</h5>
@@ -79,7 +79,7 @@
                         <hr>
                             <div class="row mb-4 d-flex align-items-center g-0 w-50">
                                 <div class="col-1 d-flex justify-content-center">
-                                    <img src="{{ comment.user.profile_picture }}" alt="{{ comment.user.username }}" class="rounded-circle img-fluid" style="width: 40px; height: 40px;">
+                                    <img src="{{ comment.user.profile_picture }}" alt="{{ comment.user.username }}" class="rounded-circle img-fluid object-fit-contain" style="width: 40px; height: 40px;">
                                 </div>
                                 <div class="col-2 d-flex align-items-center ms-1">
                                     <p class="lead fs-6 mb-0">{{ comment.user.username }}</p>
