@@ -594,3 +594,34 @@ def comments_management(request, post_id, comment_id=None):
         print(comments_seen_response.json())
         return redirect('my_site:your-posts')
             
+
+def delete_comment(request, post_id, comment_id):
+    token = request.session.get('auth_token')
+
+    post_get = requests.get(f'{BASE_API_URL}posts/{post_id}/')
+    if post_get.status_code == 200:
+        post = post_get.json()
+    else:
+        raise Http404("Post not found!")
+    
+    if not token:
+        messages.error(request, 'ابتدا وارد شوید.')
+        return redirect('my_site:login')
+
+    headers = {
+        'Authorization': f'Token {token}'
+    }
+
+    comment_delete_response = requests.delete(f'{BASE_API_URL}comments/delete-comment/{comment_id}/', headers=headers)
+
+    if comment_delete_response.status_code == 204:
+        messages.success(request, 'نظر با موفقیت حذف شد.')
+        return redirect('my_site:comments-management', post_id=post_id)
+    
+    else:
+        messages.error(request, 'مشکلی پیش آمده! لطفا دوباره سعی کنید!')        
+        return redirect('my_site:comments-management', post_id=post_id)
+
+        
+    
+        

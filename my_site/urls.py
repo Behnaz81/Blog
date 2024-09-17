@@ -1,5 +1,5 @@
 from django.urls import path
-from my_site.views import index_view, filtered_posts, detail_post, register_user, login_user, new_post, list_posts, delete_post, update_post, logout_user, profile, comments_management
+from my_site.views import index_view, filtered_posts, detail_post, register_user, login_user, new_post, list_posts, delete_post, update_post, logout_user, profile, comments_management, delete_comment
 
 app_name = "my_site"
 
@@ -17,4 +17,5 @@ urlpatterns = [
     path('profile/', profile, name="profile"),
     path('comments-management/<int:post_id>/', comments_management, name='comments-management'),
     path('comments-management/<int:post_id>/<int:comment_id>/', comments_management, name='comments-management-display'),
+    path('delete-comment/<int:post_id>/<int:comment_id>/', delete_comment, name="delete-comment"),
 ]
