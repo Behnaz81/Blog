@@ -30,7 +30,7 @@
                         {{ request.session.username }}
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a href="#" class="dropdown-item text-center">پروفایل من</a>
+                        <a href="{% url 'my_site:profile' %}" class="dropdown-item text-center">پروفایل من</a>
                         <a href="{% url 'my_site:your-posts' %}" class="dropdown-item text-center">پست‌های من</a>
                         <form method="post">
                             {% csrf_token %}
