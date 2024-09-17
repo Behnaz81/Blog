@@ -25,3 +25,20 @@ class CreateCommentView(generics.CreateAPIView):
     def perform_create(self, serializer):
         post = Post.objects.get(id=self.kwargs.get('post_id'))
         return serializer.save(post=post, user=self.request.user)
+    
+
+class CommentsPostBySeenStatus(generics.ListAPIView):
+    model = Comment
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        post_id = self.kwargs.get('post_id')
+        seen_status = self.request.query_params.get('seen')
+
+        queryset = Comment.objects.filter(post=post_id).filter(user=self.request.user)
+
+        if seen_status is not None:
+            seen_status = seen_status.lower() == 'true' 
+            queryset = queryset.filter(seen=seen_status)
+
+        return queryset
