@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+<!-- Title -->
+{% block title %}{{post.title}}{% endblock %}
+
+<!-- Content -->
+{% block content %}
+    <p class="fs-1 text-white text-center">نظرات پست "<a href="{% url 'my_site:detail-post' post.id %}" class="text-white text-decoration-none">{{post.title}}</a>"</p>
+
+    <table class="table w-75 mx-auto rounded">
+
+        <tr>
+            <th colspan="5">نظرات بررسی نشده</th>
+        </tr>
+
+        <tr class="text-center">
+            <th scope="col"></th>
+            <th scope="col">پیام</th>
+            <th scope="col">فرستنده</th>
+            <th scope="col">تاریخ</th>
+            <th scope="col"></th>
+        </tr>
+        {% if comments_notseen %}
+
+            {% for comment_notseen in comments_notseen %}
+            <tr class="text-center">
+                <td><input type="checkbox" name="display" id="display" {% if comment_notseen.display %}checked{% endif %}></td>
+                <td>{{ comment_notseen.message }}</td>
+                <td>{{ comment_notseen.user.username }}</td>
+                <td>{{ comment_notseen.posted_at }}</td>
+                <td>
+                    <a href="#" class="btn btn-danger">حذف</a>
+                </td>
+            </tr>
+            {% endfor %}
+
+        {% else %}
+            <tr>
+                <th colspan="5">نظری برای بررسی وجود ندارد</th>
+            </tr>
+        {% endif %}
+
+
+        {% if comments_seen %}
+            <tr>
+                <th colspan="5">نظرات بررسی شده</th>
+            </tr>
+
+            <tr class="text-center">
+                <th scope="col"></th>
+                <th scope="col">پیام</th>
+                <th scope="col">فرستنده</th>
+                <th scope="col">تاریخ</th>
+                <th scope="col"></th>
+            </tr>
+
+            {% for comment_seen in comments_seen %}
+            <tr class="text-center">
+                <td><input type="checkbox" name="display" id="display" {% if comment_seen.display %}checked{% endif %}></td>
+                <td>{{ comment_seen.message }}</td>
+                <td>{{ comment_seen.user.username }}</td>
+                <td>{{ comment_seen.posted_at }}</td>
+                <td>
+                    <a href="#" class="btn btn-danger">حذف</a>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+
+    </table>
+        {% for comment_seen in comments_seen %}
+            {{comment_seen.message}}
+            {{comment_seen.user.username}}
+            {{comment_seen.user.profile_picture}}
+            {{comment_seen.posted_at}}
+        {% endfor %}
+        {% for comment_notseen in comments_notseen %}
+            {{comment_notseen.message}}
+            {{comment_notseen.user.username}}
+            {{comment_notseen.user.profile_picture}}
+            {{comment_notseen.posted_at}}
+        {% endfor %}
+{% endblock %}
