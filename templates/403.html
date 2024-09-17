@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+<!-- Title -->
+{% block title %}دسترسی ممنوع است{% endblock %}
+
+<!-- Content -->
+{% block content %}
+    <p class="fs-1 titr text-center text-white">403: شما به این صفحه دسترسی ندارید!</p>
+    <a href="{% url 'my_site:index' %}" class="text-center text-white w-100 d-block text-decoration-none">به صفحه اصلی برگردید</a>
+{% endblock %}
