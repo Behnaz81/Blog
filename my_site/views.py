@@ -492,6 +492,10 @@ def profile(request):
             updtate_profile_response = requests.patch(f'{BASE_API_URL}users/profile/', headers=headers, data=request.POST, files=request.FILES)
 
             if updtate_profile_response.status_code == 200:
+                username = request.session.get('username')
+                username = request.POST.get('username', username)
+                request.session['username'] = username
+
                 messages.success(request, 'اطلاعات با موفقیت ویرایش شد.')
                 return redirect('my_site:profile')
             
