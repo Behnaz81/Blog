@@ -45,7 +45,7 @@
                 <td>{{ comment_notseen.user.username }}</td>
                 <td>{{ comment_notseen.posted_at }}</td>
                 <td>
-                    <a href="#" class="btn btn-danger">حذف</a>
+                    <a href="{% url 'my_site:delete-comment' post.id comment_notseen.id %}" class="btn btn-danger">حذف</a>
                 </td>
             </tr>
             {% endfor %}
@@ -84,7 +84,7 @@
                 <td>{{ comment_seen.user.username }}</td>
                 <td>{{ comment_seen.posted_at }}</td>
                 <td>
-                    <a href="#" class="btn btn-danger">حذف</a>
+                    <a href="{% url 'my_site:delete-comment' post.id comment_seen.id %}" class="btn btn-danger">حذف</a>
                 </td>
             </tr>
             {% endfor %}
