@@ -75,4 +75,9 @@ class CommentsDisplayView(APIView):
         return Response(CommentSerializer(comment).data, status=200)
 
 
-            
+class DeleteCommentView(generics.DestroyAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Comment.objects.filter(post__writer=self.request.user, id=self.kwargs['pk'])
