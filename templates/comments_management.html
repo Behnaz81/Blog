@@ -7,6 +7,17 @@
 {% block content %}
     <p class="fs-1 text-white text-center">نظرات پست "<a href="{% url 'my_site:detail-post' post.id %}" class="text-white text-decoration-none">{{post.title}}</a>"</p>
 
+   <!-- Messages -->
+    <div class="w-75 mx-auto">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
     <table class="table w-75 mx-auto rounded">
 
         <tr>
@@ -24,7 +35,12 @@
 
             {% for comment_notseen in comments_notseen %}
             <tr class="text-center">
-                <td><input type="checkbox" name="display" id="display" {% if comment_notseen.display %}checked{% endif %}></td>
+                <td>
+                    <form method="POST" action="{% url 'my_site:comments-management-display' post.id comment_notseen.id %}">
+                        {% csrf_token %}
+                        <input type="submit" name="display" id="display" class="form-check-input" {% if comment_notseen.display %} checked {% endif %}>
+                    </form>
+                </td>
                 <td>{{ comment_notseen.message }}</td>
                 <td>{{ comment_notseen.user.username }}</td>
                 <td>{{ comment_notseen.posted_at }}</td>
@@ -56,7 +72,14 @@
 
             {% for comment_seen in comments_seen %}
             <tr class="text-center">
-                <td><input type="checkbox" name="display" id="display" {% if comment_seen.display %}checked{% endif %}></td>
+                <td>
+                    <form method="POST" action="{% url 'my_site:comments-management-display' post_id=post.id comment_id=comment_seen.id %}">
+                        {% csrf_token %}
+                        <input type="checkbox" name="display" id="display" class="form-check-input" 
+                               {% if comment_seen.display %} checked {% endif %}
+                               onchange="this.form.submit()">
+                    </form>
+                </td>
                 <td>{{ comment_seen.message }}</td>
                 <td>{{ comment_seen.user.username }}</td>
                 <td>{{ comment_seen.posted_at }}</td>
@@ -68,16 +91,5 @@
         {% endif %}
 
     </table>
-        {% for comment_seen in comments_seen %}
-            {{comment_seen.message}}
-            {{comment_seen.user.username}}
-            {{comment_seen.user.profile_picture}}
-            {{comment_seen.posted_at}}
-        {% endfor %}
-        {% for comment_notseen in comments_notseen %}
-            {{comment_notseen.message}}
-            {{comment_notseen.user.username}}
-            {{comment_notseen.user.profile_picture}}
-            {{comment_notseen.posted_at}}
-        {% endfor %}
+        
 {% endblock %}
